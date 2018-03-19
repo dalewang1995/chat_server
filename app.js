@@ -1,11 +1,13 @@
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var public_view = '/public/view/';
 
-server.listen(3000);
+server.listen(4005);
+
 
 app.get('/', function (req, res) {
-    res.sendfile(__dirname + '/public/view/index.html');
+    res.sendfile(__dirname + `${public_view}index.html`);
 });
 
 io.on('connection', function (socket) {
