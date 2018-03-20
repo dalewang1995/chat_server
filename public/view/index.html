@@ -10,14 +10,37 @@
 <body>
 
 <h2>hello world</h2>
-
-<!--<script src="/socket.io/socket.io.js"></script>-->
+<h3>在线人数 <span class="current-num"></span></h3>
+发送：<input type="text" class="send-msg">
+<button class="send-btn">确定</button>
+<div class="msg-box"></div>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io.connect('http://localhost');
-    socket.on('news', function (data) {
+    $(function() {
+    let socket = io.connect('/');
+
+    //接收系统广播消息
+    socket.on('system',function(data){
         console.log(data);
-        socket.emit('my other event', { my: 'data' });
+        $(".msg-box").append('<p>'+data.name+'</p>')
     });
+    $(".send-btn").click(function () {
+        currentMsg = $(".send-msg").val();
+        console.log(currentMsg);
+        socket.emit('send-msg', currentMsg)
+    });
+    // 在线人数
+    socket.on('disUser', (usersInfo)=> {
+//        displayUser(usersInfo);
+        $(".current-num").text(usersInfo.num)
+
+    });
+    //socket失去连接时触发（包括关闭浏览器，主动断开，掉线等任何断开连接的情况）
+    socket.on('disconnect',function(){
+        console.log("server disconnect");
+    });
+    })
 </script>
 </body>
 </html>
