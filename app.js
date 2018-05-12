@@ -9,24 +9,20 @@ const cors = require('cors')
 // 加密
 const crypto = require('crypto');
 
-// hash.update('Hello, nodejs!');
-
 //数据库model
 var User = require('./Model/User.js')
 
 
 const index = require('./router/index')
-// const movie = require('./router/movie')
-
+// 中间件
 const bodyParser = require('body-parser')
 // parse application/json
 app.use(bodyParser.json())
-
 //cors跨域
 app.use(cors())
 
 app.use('/', index)
-// app.use('/api', movie)
+
 
 function getuserId(){
     var result=''
