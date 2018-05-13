@@ -45,20 +45,20 @@ app.post('/api/login', function(req, res) {
       }
       if (user) {
         res.json({
-          ret: true,
+          state: true,
           data: {
             stateText: '登录成功！',
             userId: user.userId,
             username: user.username
-          }
+          },
+          errorMsg: ''
         })
       }else{
         res.json({
-          ret: false,
+          state: false,
           data: {
-            stateText: '用户名或者密码错误！'
           },
-          errmsg: '用户名或者密码错误！'
+          errMsg: '用户名或错误！'
         })
       }
     })
@@ -77,11 +77,11 @@ app.post('/api/register', function(req, res) {
       console.log(user)
       if (user) {
         res.json({
-          ret: false,
+          state: false,
           data: {
-            stateText: '用户已存在!'
+
           },
-          errmsg: "用户已存在"
+          errMsg: "用户已存在"
         })
       }else {
         // 密码加密
@@ -93,9 +93,9 @@ app.post('/api/register', function(req, res) {
             return
           }
           res.json({
-            ret: true,
+            state: true,
             data: {
-              stateText: '注册成功！'
+              stateText: '注册成功，请登录！'
             }
           })
         })

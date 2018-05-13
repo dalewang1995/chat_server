@@ -1,12 +1,6 @@
 <template>
   <div>
-    <div class="login-user" v-show="isShowLogin">
-      昵称：<input type="text" v-model.trim="nickName"> <br>
-      密码：<input type="password" v-model.trim="password"> <br>
-      
-      <button @click="loginBtn(true)">登录</button>
-      <button @click="loginBtn(false)">注册</button>
-    </div>
+
     <div class="main" v-show="!isShowLogin">
       <div class="panel">
         <div class="header">
@@ -136,29 +130,6 @@ export default {
     },
     userMenu() {
       alert(0)
-    },
-    loginBtn(isLogin) {
-      let nickName = this.nickName;
-      let password = this.password;
-      console.log(nickName, password);
-
-      if(isLogin) {
-        api.login(nickName, password, (isSuccess,data,err)=>{
-          if(isSuccess) {
-            console.log('isSuccess...',data )
-          }else {
-            console.log('err', err)
-          }
-        })
-      }else {
-        api.register(nickName, password, (isSuccess,data,err)=>{
-          if(isSuccess) {
-            console.log('注册...',data )
-          }else {
-            console.log('err', err)
-          }
-        })
-      }
     }
  
   },
@@ -179,12 +150,8 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-  .login-user {
-    width: 200px;
-    height: 200px;
-    border: 1px solid slategray;
-  }
+<style lang="scss" scoped>
+
   .main {
     max-width: 1000px;
     min-width: 800px;
@@ -287,14 +254,12 @@ export default {
     left: 0;
     bottom: 180px;
     padding: 0 19px;
+
+    li {
+      list-style: none;
+    }
   }
-  .box-bd li {
-    list-style: none;
-  }
-    /* text-align: center;
-  margin-top: 130px;
-  color: #ccc;
-  font-size: 13px; */
+
   .box-ft {
     position: absolute;
     right: 0;
@@ -311,32 +276,32 @@ export default {
 
   .msg-content {
     height: 84px;
-  }
-  .msg-content textarea {
-    height: 100%;
-    width: 100%;
-    padding-left: 20px;
-    border: none;
-    font-size: 1em;
-    outline: none;
-    resize:none;
-    overflow: height;
-    background-color: #eee;
+    textarea {
+      height: 100%;
+      width: 100%;
+      padding-left: 20px;
+      border: none;
+      font-size: 1em;
+      outline: none;
+      resize:none;
+      overflow: height;
+      background-color: #eee;
+    }
   }
   .btn-action {
     text-align: right;
 
-  }
-  .btn-action a {
-    display: inline-block;
-    padding-left: 30px;
-    padding-right: 30px;
-    text-decoration: none;
-    border: 1px solid #c1c1c1;
-    border-radius: 4px;
-    padding: 3px 20px;
-    font-size: 14px;
-    color: #222;
-    background-color: #fff;
+    a {
+        display: inline-block;
+        padding-left: 30px;
+        padding-right: 30px;
+        text-decoration: none;
+        border: 1px solid #c1c1c1;
+        border-radius: 4px;
+        padding: 3px 20px;
+        font-size: 14px;
+        color: #222;
+        background-color: #fff;
+      }
   }
 </style>
