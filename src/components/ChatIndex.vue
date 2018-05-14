@@ -256,7 +256,11 @@ export default {
     padding: 0 19px;
 
     li {
-      list-style: none;
+      display: inline-block;
+      padding: 10px;
+      border-radius: 3px; 
+      font-size: 14px;
+      background-color:#b3e185;
     }
   }
 
