@@ -1,6 +1,7 @@
 const axios = require('axios');
 let HttpRequest = function (){}
 HttpRequest.prototype.axios = axios
+// axios.defaults.withCredentials = true
 HttpRequest.prototype.postRequest = function(url,data,callback,args1){
   this.httpHandle(url,data,callback,'post',args1)
 }

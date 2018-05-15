@@ -103,6 +103,37 @@ app.post('/api/register', function(req, res) {
     })
   })
 
+// 验证uid，确定登录身份
+app.get('/api/islogin', function(req, res) {
+
+  const data = req.body;
+  User.findOne({userId: data.userId}, (err, user) => {
+    if (err) {
+      console.log('login err')
+      return
+    }
+    if (user) {
+      res.json({
+        state: true,
+        data: {
+          stateText: '验证成功！',
+          userId: user.userId,
+        },
+        errorMsg: ''
+      })
+    }else{
+      res.json({
+        state: false,
+        data: {
+        },
+        errMsg: '验证失败'
+      })
+    }
+  })
+})
+
+
+
 
 io.on('connection', function (socket) {
     console.log('a user connected');

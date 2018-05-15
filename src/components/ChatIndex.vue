@@ -9,7 +9,7 @@
           </div>
           
           <div class="info">
-            <span>汪小鱼</span>
+            <span>{{username}}</span>
             <span class="menu" @click="userMenu()">MENU</span>
           </div>
 
@@ -63,7 +63,7 @@
         <div class="box-hd">
           <div class="title-wrap">
             <div class="title-name">
-              汪小鱼
+              {{username}}
             </div>
           </div>
         </div>
@@ -95,6 +95,7 @@
 // import { mapState } from 'vuex';
 import io from 'socket.io-client';
 import api from '@/api/chatApi.js';
+import { mapState } from 'vuex';
 
 export default {
   name: 'ChatIndex',
@@ -103,7 +104,7 @@ export default {
       msg: 'Welcome to Your Vue.js App',
       BdContent: [],
       isShowLogin: false,
-      nickName: '',
+      username: '',
       password: ''
     }
   },
@@ -115,10 +116,8 @@ export default {
 				roomId: 0,
 				timeStamp: this.getTimeStr(),
 				// status: 'usermsg',
-				userId: '222',
-				avator: 'dadwwadwa',
-				nickname: 'dale',
-				text: value
+				userId: this.userInfo.userId,
+				username: this.userInfo.userId
       }
       
       this.socket.emit('chat-msg', MsgObj);
@@ -143,8 +142,10 @@ export default {
     this.socket.emit('room', infoObj);
     this.socket.on('room', (joinInfo) => {
       console.log(joinInfo)
-		})
-  }
+    })
+    this.username = this.userInfo.username
+  },
+  computed:mapState(['userInfo'])
   // component() { Header }
 }
 </script>

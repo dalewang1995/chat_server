@@ -19,6 +19,7 @@
 
 <script>
 import api from '@/api/chatApi.js';
+import {setCookie} from '../util/util.js'
 export default {
   name: 'Login',
   data () {
@@ -42,6 +43,8 @@ export default {
               api.login(nickName, password, (isSuccess,data,err)=>{
                 if(isSuccess) {
                   this.errMsg = data.stateText;
+                  const res = this.$store.dispatch('login', data);
+                  setCookie('uid_session',data.userId,1)
                   this.$router.push({ name:'ChatIndex' })
                 }else {
                   this.errMsg = err.errorMsg;
