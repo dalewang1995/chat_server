@@ -117,7 +117,7 @@ export default {
 				timeStamp: this.getTimeStr(),
 				// status: 'usermsg',
 				userId: this.userInfo.userId,
-				username: this.userInfo.userId
+				username: this.userInfo.username
       }
       
       this.socket.emit('chat-msg', MsgObj);
@@ -136,7 +136,7 @@ export default {
     this.socket = io('http://localhost:4005');
     const infoObj = {
 			status: '0',
-			nickname: 'dale',
+			username: this.userInfo.username,
 			roomId: 123
 		}
     this.socket.emit('room', infoObj);

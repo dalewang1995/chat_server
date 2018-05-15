@@ -27,18 +27,22 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if(to.meta.requireAuth) {
-    fetch('/api/islogin',{
-      method: 'GET',}).then(res => {
-      if(res.errCode == 200) {
-        next();
-      } else {
-        if(getCookie('uid_session')) {
-          // delCookie('uid_session');
+    fetch('/api/islogin',{credentials: 'include'}).then(res => {
+      res.json().then(rs =>{
+        console.log('res----',rs.state);
+
+        if(rs.state) {
+          next();
+        } else {
+          if(getCookie('uid_session')) {
+            delCookie('uid_session');
+          }
+          next({
+            path: '/login'
+          });
         }
-        next({
-          path: '/login'
-        });
-      }
+      })
+
     });
   } else {
     next();

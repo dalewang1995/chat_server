@@ -16,8 +16,11 @@ var User = require('./Model/User.js')
 const index = require('./router/index')
 // 中间件
 const bodyParser = require('body-parser')
+// cookie
+var cookieParser = require('cookie-parser')
 // parse application/json
 app.use(bodyParser.json())
+app.use(cookieParser())
 //cors跨域
 app.use(cors())
 
@@ -105,9 +108,9 @@ app.post('/api/register', function(req, res) {
 
 // 验证uid，确定登录身份
 app.get('/api/islogin', function(req, res) {
-
-  const data = req.body;
-  User.findOne({userId: data.userId}, (err, user) => {
+  console.log('/api/islogin',req.cookies.uid_session)
+  const uid = req.cookies.uid_session;
+  User.findOne({userId: uid}, (err, user) => {
     if (err) {
       console.log('login err')
       return
@@ -118,6 +121,7 @@ app.get('/api/islogin', function(req, res) {
         data: {
           stateText: '验证成功！',
           userId: user.userId,
+          username: user.username
         },
         errorMsg: ''
       })
