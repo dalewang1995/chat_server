@@ -29,8 +29,8 @@ router.beforeEach((to, from, next) => {
   if(to.meta.requireAuth) {
     fetch('/api/islogin',{credentials: 'include'}).then(res => {
       res.json().then(rs =>{
-        console.log('res----',rs.state);
-
+        console.log('res----',rs.state,rs);
+        router.app.$store.dispatch('login', rs.data);
         if(rs.state) {
           next();
         } else {

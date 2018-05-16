@@ -26,6 +26,9 @@ app.use(cors())
 
 app.use('/', index)
 
+// 当前在线用户数组
+
+let onLineUsers = []
 
 function getuserId(){
     var result=''
@@ -33,7 +36,7 @@ function getuserId(){
       result += Math.floor(Math.random()*16).toString(16)//获取0-15并通过toString转16进制
     }
     return result
-  }
+}
 
 // 登录用户
 app.post('/api/login', function(req, res) {
@@ -111,6 +114,7 @@ app.get('/api/islogin', function(req, res) {
   console.log('/api/islogin',req.cookies.uid_session)
   const uid = req.cookies.uid_session;
   User.findOne({userId: uid}, (err, user) => {
+
     if (err) {
       console.log('login err')
       return
@@ -136,9 +140,6 @@ app.get('/api/islogin', function(req, res) {
   })
 })
 
-
-
-
 io.on('connection', function (socket) {
     console.log('a user connected');
     socket.on('room', (info) => {
@@ -147,14 +148,30 @@ io.on('connection', function (socket) {
         console.log(info)
         let joinInfo = {
           status: 1,
-          text: '后端'
+          text: '后端',
+        
         }
         socket.emit('room', joinInfo)
     });
 
-    socket.on('chat-msg', (msg) => {
-        console.log(msg)
+    socket.on('join-room', (info) => {
+      // 添加到房间
+      socket.join(info.roomId)
+      const joinInfo = {
+        status: info.status,
+        text: info.username + '加入了群聊',
+        username: info.username
+      }
+      // socket.emit('join-room', info)
+      socket.to(info.roomId).broadcast.emit('join-room', joinInfo)
     })
+    // 群聊天
+    socket.on('chat-msg', (msg) => {
+      console.log('msg---',msg)
+      io.to(msg.roomId).emit('chat-msg', msg)
+    })
+      
+
 });
 
 http.listen(4005, function () {

@@ -18,43 +18,9 @@
           在线人员列表
         </div>
         <div class="chat-p">
-          <ul>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
-            <li>dawdawdawdaw</li>
+          <ul v-for="(item, index) in onlineList" :key="index">
+            <li>{{item}}</li>
+
           </ul>
         </div>
       </div>
@@ -69,8 +35,20 @@
         </div>
 
         <div class="box-bd">
-            <ul v-for="(item, index) in BdContent" :key="index">
-              <li>{{item}}</li>
+            <p class="box-tips">{{boxTips}}</p>
+            <ul >
+              <!-- <li v-for="(item, index) in BdContent" :key="index">
+                <div class="msg-t">
+                  <span class="avatar-c">{{item.username.slice(0, 1)}}</span>
+                  <span class="msg-font">{{item.text}}</span>
+                </div>
+              </li> -->
+              <li v-for="(item, index) in BdContent" :key="index">
+                <div class="msg-t">
+                  <span class="avatar-c">{{item.username.slice(0, 1)}}</span>
+                  <span class="msg-font">{{item.text}}</span>
+                </div>
+              </li>
             </ul>
         </div>
 
@@ -105,19 +83,22 @@ export default {
       BdContent: [],
       isShowLogin: false,
       username: '',
-      password: ''
+      password: '',
+      onlineList: [],
+      boxTips:'',
+      avatarNmame:'H'
     }
   },
   methods:{
     getSendMSG() {
       let value = this.$refs.TextVal.value;
-      this.BdContent.push(value);
       const MsgObj = {
-				roomId: 0,
+				roomId: 123,
 				timeStamp: this.getTimeStr(),
 				// status: 'usermsg',
 				userId: this.userInfo.userId,
-				username: this.userInfo.username
+        username: this.userInfo.username,
+        text:value
       }
       
       this.socket.emit('chat-msg', MsgObj);
@@ -142,8 +123,30 @@ export default {
     this.socket.emit('room', infoObj);
     this.socket.on('room', (joinInfo) => {
       console.log(joinInfo)
-    })
-    this.username = this.userInfo.username
+    });
+    // 登录提醒
+    this.socket.emit('join-room', infoObj)
+		this.socket.on('join-room', (chatInfo) => {
+      this.boxTips = chatInfo.text;
+      this.onlineList.push(chatInfo.username);
+			// this.MsgList.push(joinInfo)
+			// this.$nextTick(() => {
+			// 		this.msgDOM.scrollTop = this.msgDOM.scrollHeight
+			// })
+    });
+    // 聊天
+		this.socket.on('chat-msg', (msg) => {
+			console.log('chat-msg233',msg)
+      this.BdContent.push(msg);
+			// this.$nextTick(() => {
+			// 	this.msgDOM.scrollTop = this.msgDOM.scrollHeight
+			// })
+		})
+
+    let currentName = this.userInfo.username;
+    
+    this.username = currentName;
+    this.onlineList.push(currentName);
   },
   computed:mapState(['userInfo'])
   // component() { Header }
@@ -213,6 +216,32 @@ export default {
     width: 100%;
     height: 100%;
     overflow-y: auto;
+    li {
+      font-weight: 400;
+      font-size: 13px;
+      color: #fff;
+      line-height: 20px;
+    }
+  }
+  .box-tips {
+    text-align: center;
+    margin-top: 20px;
+    color: #ccc;
+    font-size: 13px;
+  }
+  .avatar-c {
+    position:absolute;
+    top: 0px;
+    left: -48px;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 40px;
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    color: white;
+    background-color:sandybrown;
   }
 
   /*  */
@@ -256,12 +285,31 @@ export default {
     bottom: 180px;
     padding: 0 19px;
 
-    li {
-      display: inline-block;
-      padding: 10px;
-      border-radius: 3px; 
-      font-size: 14px;
-      background-color:#b3e185;
+    ul li {
+      margin-bottom:16px;
+
+        .msg-t {
+          position: relative;
+        
+        .msg-font {
+          display:inline-block;
+          padding: 10px;
+          border-radius: 3px; 
+          font-size: 14px;
+          line-height:20px;
+          background-color:#b3e185;
+        }
+
+        &::after {
+          position: absolute;
+          top: 12px;
+          left: -10px;
+          border: 6px solid transparent;
+          border-right-color: #b2e281;
+          border-right-width: 4px;
+          content: " ";
+        }
+      }
     }
   }
 
