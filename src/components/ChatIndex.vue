@@ -115,7 +115,7 @@ export default {
   },
   mounted() {
     this.socket = io('http://localhost:4005');
-    const infoObj = {
+    let infoObj = {
 			status: '0',
 			username: this.userInfo.username,
 			roomId: 123

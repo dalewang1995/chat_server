@@ -64,9 +64,6 @@ export default {
           }
 
         }
-  },
-  created:{
-    
   }
 }
 </script>
