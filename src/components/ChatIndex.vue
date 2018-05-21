@@ -18,8 +18,16 @@
           在线人员列表
         </div>
         <div class="chat-p">
-          <ul v-for="(item, index) in onlineList" :key="index">
-            <li>{{item}}</li>
+          <ul>
+            <li :class="{'user-selected': item.isSelected}" v-for="(item, index) in onlineList" :key="index" @click="user_focus(item)">
+              <div class="user-avatar">
+                <img src="" alt="">
+                <span class="avatar"></span>
+              </div>
+              <div>
+                <span>{{item.name}}</span>
+              </div>
+            </li>
 
           </ul>
         </div>
@@ -37,18 +45,18 @@
         <div class="box-bd">
             <p class="box-tips">{{boxTips}}</p>
             <ul >
+              <li :class="{'msg-li': item.userId === userId }" v-for="(item, index) in BdContent" :key="index">
+                <div :class="{'msg-t-r': item.userId === userId, 'msg-t': item.userId !== userId}">
+                  <span :class="{'avatar-c-r': item.userId === userId, 'avatar-c': item.userId !== userId}">{{item.username.slice(0, 1)}}</span>
+                  <span class="msg-font">{{item.text}}</span>
+                </div>
+              </li>
               <!-- <li v-for="(item, index) in BdContent" :key="index">
                 <div class="msg-t">
                   <span class="avatar-c">{{item.username.slice(0, 1)}}</span>
                   <span class="msg-font">{{item.text}}</span>
                 </div>
               </li> -->
-              <li v-for="(item, index) in BdContent" :key="index">
-                <div class="msg-t">
-                  <span class="avatar-c">{{item.username.slice(0, 1)}}</span>
-                  <span class="msg-font">{{item.text}}</span>
-                </div>
-              </li>
             </ul>
         </div>
 
@@ -86,7 +94,8 @@ export default {
       password: '',
       onlineList: [],
       boxTips:'',
-      avatarNmame:'H'
+      avatarNmame:'H',
+      userId:''
     }
   },
   methods:{
@@ -110,6 +119,20 @@ export default {
     },
     userMenu() {
       alert(0)
+    },
+    user_focus(item) {
+      this.onlineList.map((user) => {
+        user.isSelected = false;
+      })
+      item.isSelected = true;
+
+    },
+    singal_user(item) {
+      let onlineUser = {
+        name:item,
+        isSelected:false 
+      }
+      this.onlineList.push(onlineUser);
     }
  
   },
@@ -128,7 +151,9 @@ export default {
     this.socket.emit('join-room', infoObj)
 		this.socket.on('join-room', (chatInfo) => {
       this.boxTips = chatInfo.text;
-      this.onlineList.push(chatInfo.username);
+      // this.onlineList.push(chatInfo.username);
+      let userName = chatInfo.username
+      this.singal_user(userName);
 			// this.MsgList.push(joinInfo)
 			// this.$nextTick(() => {
 			// 		this.msgDOM.scrollTop = this.msgDOM.scrollHeight
@@ -144,9 +169,11 @@ export default {
 		})
 
     let currentName = this.userInfo.username;
-    
+    this.userId = this.userInfo.userId;
     this.username = currentName;
-    this.onlineList.push(currentName);
+
+    this.singal_user(currentName)
+    
   },
   computed:mapState(['userInfo'])
   // component() { Header }
@@ -212,16 +239,38 @@ export default {
     border-bottom: 1px solid #292c33;
   }
 
+
+  .user-avatar {
+    float: left;
+    margin-right: 10px;
+  }
   .chat-p {
     width: 100%;
     height: 100%;
     overflow-y: auto;
     li {
+      height: 40px;
       font-weight: 400;
       font-size: 13px;
       color: #fff;
       line-height: 20px;
+      border-bottom:1px solid rgb(41, 44, 51);
+      padding: 12px 18px 11px 18px;
     }
+    .user-selected {
+      background-color: #3a3f45;
+    }
+    // .avatar {
+    //   font-size: 26px;
+    //   font-weight: 800;
+    //   line-height: 40px;
+    //   text-align: center;
+    //   width: 40px;
+    //   height: 40px;
+    //   border-radius: 2px;
+    //   color: white;
+    //   background-color:sandybrown;
+    // }
   }
   .box-tips {
     text-align: center;
@@ -229,20 +278,7 @@ export default {
     color: #ccc;
     font-size: 13px;
   }
-  .avatar-c {
-    position:absolute;
-    top: 0px;
-    left: -48px;
-    font-size: 26px;
-    font-weight: 800;
-    line-height: 40px;
-    text-align: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 2px;
-    color: white;
-    background-color:sandybrown;
-  }
+
 
   /*  */
 
@@ -310,7 +346,66 @@ export default {
           content: " ";
         }
       }
+
+      .msg-t-r {
+        position: relative;
+
+        .msg-font {
+          text-align: left;
+          display:inline-block;
+          padding: 10px;
+          border-radius: 3px; 
+          font-size: 14px;
+          line-height:20px;
+          background-color:#b3e185;
+        }
+
+        &::after {
+          position: absolute;
+          top: 12px;
+          right: -10px;
+          border: 6px solid transparent;
+          border-left-color: #b2e281;
+          border-left-width: 4px;
+          content: " ";
+        }
+      }
     }
+  }
+
+  .avatar-c {
+    position:absolute;
+    top: 0px;
+    left: -48px;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 40px;
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    color: white;
+    background-color:sandybrown;
+  }
+
+  .avatar-c-r {
+    position:absolute;
+    top: 0px;
+    right: -48px;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 40px;
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    color: white;
+    background-color:sandybrown;
+  }
+  // 右侧消息
+  .msg-li {
+    padding-right: 50px;
+    text-align: right;
   }
 
   .box-ft {
