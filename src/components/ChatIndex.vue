@@ -22,10 +22,11 @@
             <li :class="{'user-selected': item.isSelected}" v-for="(item, index) in onlineList" :key="index" @click="user_focus(item)">
               <div class="user-avatar">
                 <img src="" alt="">
-                <span class="avatar"></span>
+                <span class="avatar-f">{{item.name.slice(0,1)}}</span>
               </div>
               <div>
                 <span>{{item.name}}</span>
+                <span class="online-time">{{item.timeStamp | timeFilter}}</span>
               </div>
             </li>
 
@@ -37,7 +38,7 @@
         <div class="box-hd">
           <div class="title-wrap">
             <div class="title-name">
-              {{username}}
+              {{chatName}}
             </div>
           </div>
         </div>
@@ -65,7 +66,7 @@
 
             </div>
             <div class="msg-content">
-              <textarea ref="TextVal"></textarea>
+              <textarea ref="TextVal" @keydown.13="smg_submit"></textarea>
             </div>
             <div class="btn-action">
               <a href="javascript:;" @click="getSendMSG()">发送</a>
@@ -91,6 +92,7 @@ export default {
       BdContent: [],
       isShowLogin: false,
       username: '',
+      chatName: '',
       password: '',
       onlineList: [],
       boxTips:'',
@@ -109,8 +111,9 @@ export default {
         username: this.userInfo.username,
         text:value
       }
-      
-      this.socket.emit('chat-msg', MsgObj);
+      if(value) {
+        this.socket.emit('chat-msg', MsgObj);
+      }
       this.$refs.TextVal.value = '';
     },
     getTimeStr() {
@@ -121,6 +124,7 @@ export default {
       alert(0)
     },
     user_focus(item) {
+      this.chatName = item.name;
       this.onlineList.map((user) => {
         user.isSelected = false;
       })
@@ -130,9 +134,13 @@ export default {
     singal_user(item) {
       let onlineUser = {
         name:item,
-        isSelected:false 
+        isSelected:false,
+        timeStamp: this.getTimeStr()
       }
       this.onlineList.push(onlineUser);
+    },
+    smg_submit() {
+      this.getSendMSG()
     }
  
   },
@@ -175,7 +183,16 @@ export default {
     this.singal_user(currentName)
     
   },
-  computed:mapState(['userInfo'])
+  computed:mapState(['userInfo']),
+  filters: {
+    // "2018-05-22T11:38:42.911Z"
+    timeFilter: (value) => {
+      let strIndex = value.indexOf('T');
+      let showTime = value.slice(strIndex+1, strIndex + 6)
+      return showTime
+      
+    }
+  }
   // component() { Header }
 }
 </script>
@@ -244,6 +261,10 @@ export default {
     float: left;
     margin-right: 10px;
   }
+  .online-time {
+    float: right;
+  }
+
   .chat-p {
     width: 100%;
     height: 100%;
@@ -260,17 +281,18 @@ export default {
     .user-selected {
       background-color: #3a3f45;
     }
-    // .avatar {
-    //   font-size: 26px;
-    //   font-weight: 800;
-    //   line-height: 40px;
-    //   text-align: center;
-    //   width: 40px;
-    //   height: 40px;
-    //   border-radius: 2px;
-    //   color: white;
-    //   background-color:sandybrown;
-    // }
+    .avatar-f {
+      display: inline-block;
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 40px;
+      text-align: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 2px;
+      color: white;
+      background-color:sandybrown;
+    }
   }
   .box-tips {
     text-align: center;
@@ -323,7 +345,7 @@ export default {
 
     ul li {
       margin-bottom:16px;
-
+      padding-left: 50px; 
         .msg-t {
           position: relative;
         
