@@ -97,14 +97,15 @@ export default {
       onlineList: [],
       boxTips:'',
       avatarNmame:'H',
-      userId:''
+      userId:'',
+      chatRoomId:123
     }
   },
   methods:{
     getSendMSG() {
       let value = this.$refs.TextVal.value;
       const MsgObj = {
-				roomId: 123,
+				roomId: this.chatRoomId,
 				timeStamp: this.getTimeStr(),
 				// status: 'usermsg',
 				userId: this.userInfo.userId,
@@ -125,6 +126,9 @@ export default {
     },
     user_focus(item) {
       this.chatName = item.name;
+      // 消息展示切换
+      this.BdContent = []
+
       this.onlineList.map((user) => {
         user.isSelected = false;
       })
@@ -149,7 +153,7 @@ export default {
     let infoObj = {
 			status: '0',
 			username: this.userInfo.username,
-			roomId: 123
+			roomId: this.chatRoomId
 		}
     this.socket.emit('room', infoObj);
     this.socket.on('room', (joinInfo) => {
