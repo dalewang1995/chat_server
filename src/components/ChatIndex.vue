@@ -163,21 +163,15 @@ export default {
     this.socket.emit('join-room', infoObj)
 		this.socket.on('join-room', (chatInfo) => {
       this.boxTips = chatInfo.text;
-      // this.onlineList.push(chatInfo.username);
       let userName = chatInfo.username
       this.singal_user(userName);
-			// this.MsgList.push(joinInfo)
-			// this.$nextTick(() => {
-			// 		this.msgDOM.scrollTop = this.msgDOM.scrollHeight
-			// })
+
     });
     // 聊天
 		this.socket.on('chat-msg', (msg) => {
 			console.log('chat-msg233',msg)
       this.BdContent.push(msg);
-			// this.$nextTick(() => {
-			// 	this.msgDOM.scrollTop = this.msgDOM.scrollHeight
-			// })
+
 		})
 
     let currentName = this.userInfo.username;

@@ -162,7 +162,6 @@ io.on('connection', function (socket) {
         text: info.username + '加入了群聊',
         username: info.username
       }
-      // socket.emit('join-room', info)
       socket.to(info.roomId).broadcast.emit('join-room', joinInfo)
     })
     // 群聊天
@@ -171,7 +170,6 @@ io.on('connection', function (socket) {
       io.to(msg.roomId).emit('chat-msg', msg)
     })
       
-
 });
 
 http.listen(4005, function () {
