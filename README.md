@@ -4,9 +4,8 @@
 Vue 部分使用 scss 预处理，axios接口请求
 ## Build Setup
 
-``` bash
 # install dependencies
-npm install
+`npm install`
 
 # serve with hot reload at localhost:8080
 👉 前端 vue `npm run dev`   端口 localhost:8080  
@@ -15,11 +14,10 @@ npm install
    进入数据库 mongo 
 👉 跨域 webpack代理
 # build for production with minification
-npm run build
+`npm run build`
 
 # build for production and view the bundle analyzer report
-npm run build --report
-```
+`npm run build --report`
 ### 功能
 
 #### 用户
